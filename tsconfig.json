@@ -21,6 +21,9 @@
       "@modules/*": [
         "./src/modules/*"
       ],
+      "@services/*": [
+        "./src/services/*"
+      ],
     }
   },
   "include": [
