@@ -6,5 +6,3 @@ export enum REQUEST_STATUS {
   FULFILLED = "fulfilled",
   FAILED = "failed",
 }
-
-export const API_URI = "https://dummyjson.com";
