@@ -1,2 +1,2 @@
-export * from './verbsHandler';
+export * from './middleware';
 export * from './Types';

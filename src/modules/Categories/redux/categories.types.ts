@@ -1,21 +1,21 @@
-import { RequestStatus } from "@constants/Types";
+import { REQUEST_STATUS } from '@assets/constants/Types';
 
 export interface CategoriesState {
   data: string[];
-  requestStatus: RequestStatus;
-  error?: unknown;
+  requestStatus: REQUEST_STATUS;
+  error?: any;
 }
 
 export const INIT_STATE: CategoriesState = {
   data: [],
-  requestStatus: "idle",
+  requestStatus: REQUEST_STATUS.IDLE,
   error: null,
 };
 
 export enum TAG {
-  GET_CATEGORIES = "GET_CATEGPRIES",
+  GET_CATEGORIES = 'GET_CATEGPRIES',
 }
 
 export enum ROUTES {
-  GET_CATEGORIES = "/products/categories",
+  GET_CATEGORIES = '/products/categories',
 }

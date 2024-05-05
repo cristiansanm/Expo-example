@@ -1,4 +1,4 @@
-import { AxiosInstance, AxiosRequestConfig } from "axios";
+import { AxiosInstance, AxiosRequestConfig } from 'axios';
 
 export type Verbs = 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
 export enum VERBS {
@@ -10,18 +10,10 @@ export enum VERBS {
 }
 
 export type AxiosSwitch = {
-  verb: Verbs,
-  httpClient?: AxiosInstance,
-  endpointReference: string,
-  params?: unknown,
-  requestConfig?: AxiosRequestConfig
-}
-
-export type CallBacks = {
-  callbackError: (() => void);
-  callbackSuccess: (() => void);
-}
-
-export type ModulesResponse = {
-  Categories: string[]
-}
+  verb: Verbs;
+  httpClient?: AxiosInstance;
+  endpointReference: string;
+  params?: unknown;
+  requestConfig?: AxiosRequestConfig;
+  rejectWithValue: (value: unknown) => any;
+};

@@ -13,6 +13,10 @@ import { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
+if (__DEV__) {
+  require('../../ReactotronConfig');
+}
+
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,

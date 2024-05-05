@@ -1,13 +1,15 @@
 import { AxiosResponse } from 'axios';
-import { AxiosSwitch, ModulesResponse, VERBS } from './Types';
-import { axiosInstance } from './axiosInstance';
 
-export async function axiosInstaceSwitch<T>({
+import { AxiosSwitch, VERBS } from '../Types';
+import { axiosInstance } from '../axiosInstance';
+
+export async function verbInstaceSwitch({
   verb,
   endpointReference,
   params,
   requestConfig,
   httpClient = axiosInstance,
+  rejectWithValue,
 }: AxiosSwitch): Promise<AxiosResponse<any, any>> {
   switch (verb) {
     case VERBS.DELETE: {
@@ -18,7 +20,7 @@ export async function axiosInstaceSwitch<T>({
         );
         return response;
       } catch (error: any) {
-        return error ?? error?.response;
+        return error?.response || error;
       }
     }
 
@@ -28,7 +30,7 @@ export async function axiosInstaceSwitch<T>({
 
         return response;
       } catch (error: any) {
-        return error ?? error?.response;
+        return rejectWithValue(error.response);
       }
     }
 
@@ -42,7 +44,7 @@ export async function axiosInstaceSwitch<T>({
 
         return response;
       } catch (error: any) {
-        return error ?? error?.response;
+        return rejectWithValue(error.response);
       }
     }
 
@@ -56,7 +58,7 @@ export async function axiosInstaceSwitch<T>({
 
         return response;
       } catch (error: any) {
-        return error ?? error?.response;
+        return rejectWithValue(error.response);
       }
     }
 
@@ -70,17 +72,20 @@ export async function axiosInstaceSwitch<T>({
 
         return response;
       } catch (error: any) {
-        return error ?? error?.response;
+        return rejectWithValue(error.response);
       }
     }
+
     default: {
-      return Promise.resolve({
+      const error = Promise.resolve({
         data: null,
         status: 500,
         statusText: 'No fetched data | URI not found | Wrong endpoint',
         headers: {},
         config: {},
       });
+      rejectWithValue(error);
+      return rejectWithValue(error);
     }
   }
 }
