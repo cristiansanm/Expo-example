@@ -13,7 +13,7 @@ export const INIT_STATE: CategoriesState = {
 };
 
 export enum TAG {
-  GET_CATEGORIES = 'GET_CATEGPRIES',
+  GET_CATEGORIES = 'GET_CATEGORIES',
 }
 
 export enum ROUTES {
