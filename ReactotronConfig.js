@@ -3,8 +3,9 @@ import Reactotron from 'reactotron-react-native';
 import { reactotronRedux } from 'reactotron-redux';
 
 const reactotron = Reactotron.setAsyncStorageHandler(AsyncStorage)
-  .configure() // controls connection & communication settings
-  .use(reactotronRedux()) // add all built-in react native plugins
+  .configure()
+  .useReactNative()
+  .use(reactotronRedux())
   .connect();
-
+export const { log: consoleLog } = reactotron;
 export default reactotron;

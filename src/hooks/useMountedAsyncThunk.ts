@@ -1,26 +1,32 @@
 import { REQUEST_STATUS } from '@assets/constants';
+import { AsyncThunk } from '@reduxjs/toolkit';
 import { useAppDispatch } from '@services/store';
 import { RootState } from '@services/store/Types';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-type GetQueryOptions = {
+type GetQueryOptions<T, Args> = {
   selectStatus: (state: RootState) => REQUEST_STATUS;
   selectData: (state: RootState) => any;
   selectError: (state: RootState) => any;
-  getAsynFn: Function;
+  getAsynFn: AsyncThunk<T, Args, any>;
   statusSetter: Function;
-  runOnMount?: boolean;
+  skip?: boolean;
+  refetchOnMountOrArgChange?: boolean;
 };
 
-export const useGetQuery = ({
-  selectStatus,
-  selectData,
-  selectError,
-  getAsynFn,
-  statusSetter,
-  runOnMount = true,
-}: GetQueryOptions) => {
+export function useMountedAsynThunk<T, Args>(
+  args: any | undefined,
+  {
+    selectStatus,
+    selectData,
+    selectError,
+    getAsynFn,
+    statusSetter,
+    skip = false,
+    refetchOnMountOrArgChange = false,
+  }: GetQueryOptions<T, Args>,
+) {
   const dispatch = useAppDispatch();
   // select the current status from the store state for the provided name
   const status = useSelector(selectStatus);
@@ -30,17 +36,30 @@ export const useGetQuery = ({
   // select current error
   const error = useSelector(selectError);
 
+  const refrehsOnArgChange = refetchOnMountOrArgChange && args ? args : null;
+
   useEffect(() => {
-    if (runOnMount) {
-      if (status === REQUEST_STATUS.IDLE) {
-        dispatch(getAsynFn());
+    if (!skip) {
+      const shouldFetch =
+        status === REQUEST_STATUS.IDLE || refetchOnMountOrArgChange;
+      if (shouldFetch) {
+        dispatch(getAsynFn(args));
       }
     }
-  }, [status, dispatch, getAsynFn, runOnMount]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    skip,
+    status,
+    dispatch,
+    getAsynFn,
+    refetchOnMountOrArgChange,
+    refrehsOnArgChange,
+  ]);
 
   const refetch = () => {
     dispatch(statusSetter(REQUEST_STATUS.IDLE));
   };
+
   // derive status booleans for ease of use
   const isUninitialized = status === REQUEST_STATUS.IDLE;
   const isLoading = status === REQUEST_STATUS.LOADING;
@@ -57,4 +76,4 @@ export const useGetQuery = ({
     isSuccess,
     refetch,
   };
-};
+}

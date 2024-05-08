@@ -1,4 +1,3 @@
-//store.ts
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DevToolsEnhancerOptions, configureStore } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';

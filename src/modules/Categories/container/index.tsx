@@ -1,12 +1,8 @@
-import Colors from '@assets/constants/Colors';
-import { TabBarIcon } from '@components/IconBuilder';
 import { Text, View } from '@components/Themed';
-import { useColorScheme } from '@components/useColorScheme';
-import { useGetQuery } from '@hooks/useGetQuery';
-import { nanoid } from '@reduxjs/toolkit';
-import { Link } from 'expo-router';
-import { Alert, TouchableOpacity } from 'react-native';
+import { useMountedAsynThunk } from '@hooks/useMountedAsyncThunk';
+import { Alert, FlatList, TouchableOpacity } from 'react-native';
 
+import { CategoryItem } from '../components/CategoryItem';
 import { getAllCategories } from '../redux/categories.controller';
 import {
   selectStatus,
@@ -14,24 +10,26 @@ import {
   selectData,
 } from '../redux/categories.selector';
 import { setRequestStatus } from '../redux/categories.slice';
+
 export const CategoriesContainer = () => {
-  const { data, isError, isLoading, isSuccess, error, refetch } = useGetQuery({
-    selectStatus,
-    selectError,
-    selectData,
-    getAsynFn: () =>
-      getAllCategories({
-        callbackError: tag => {
+  const { data, isError, isLoading, isSuccess, error, refetch } =
+    useMountedAsynThunk(
+      {
+        callbackError: (tag: string) => {
           Alert.alert(`Respuesta fallida -> ${tag}`);
         },
-        callbackSuccess(tag) {
+        callbackSuccess(tag: string) {
           Alert.alert(`Respuesta obtenida correctamente -> ${tag}`);
         },
-      }),
-    statusSetter: setRequestStatus,
-  });
-
-  const currentScheme = useColorScheme();
+      },
+      {
+        selectStatus,
+        selectError,
+        selectData,
+        getAsynFn: getAllCategories,
+        statusSetter: setRequestStatus,
+      },
+    );
 
   // useEffect(() => {
   //   refetch();
@@ -41,6 +39,7 @@ export const CategoriesContainer = () => {
   if (isLoading) {
     return <Text>Loading...</Text>;
   }
+
   if (isError) {
     return (
       <View>
@@ -58,17 +57,12 @@ export const CategoriesContainer = () => {
     return (
       <View style={{ height: '100%', padding: '5%' }}>
         {data?.length ? (
-          data.map((category: string) => (
-            <Link key={`${category}${nanoid(3)}`} href="/(tabs)/two">
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <TabBarIcon
-                  name="list"
-                  color={Colors[currentScheme ?? 'light'].tint}
-                />
-                <Text key={category + nanoid(3)}>{category}</Text>
-              </View>
-            </Link>
-          ))
+          <FlatList
+            data={data}
+            renderItem={({ item }) => <CategoryItem category={item} />}
+            onRefresh={refetch}
+            refreshing={isLoading}
+          />
         ) : (
           <Text>We cannot retrieve any data</Text>
         )}
@@ -78,4 +72,9 @@ export const CategoriesContainer = () => {
       </View>
     );
   }
+  return (
+    <View>
+      <Text>We cannot retrieve any data</Text>
+    </View>
+  );
 };

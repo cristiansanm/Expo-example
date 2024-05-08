@@ -1,1 +1,2 @@
-export * from './useGetQuery';
+export * from './useLazyAsynThunk';
+export * from './useMountedAsyncThunk';
